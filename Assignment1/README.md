@@ -24,7 +24,7 @@ This D3.js visualization illustrates how different countries contribute to snow 
 
 We group December, January, and February snow depths by year and country into three radial spirals. This makes it easier to identify cyclical patterns — for instance, 2010–2012 stands out for exceptionally high snowfall in February across several countries.
 
-#### 4. 🌊 Seasonal Animation
+#### 4. Seasonal Animation
 
 ![SD_Partial_Dynamics](notebook/SD_Partial_Dynamics.png)
 
