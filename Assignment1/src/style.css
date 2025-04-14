@@ -1,0 +1,54 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f7fa;
+    margin: 20px;
+    color: #333;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+svg {
+    display: block;
+    margin: 0 auto;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+}
+
+circle {
+    opacity: 0.8;
+    transition: opacity 0.2s, stroke 0.2s;
+    mix-blend-mode: multiply;
+}
+
+circle:hover {
+    opacity: 1;
+    stroke: #222;
+    stroke-width: 1.5;
+}
+
+.country-SWEDEN        { fill: #a6cee3; }
+.country-NORWAY        { fill: #1f78b4; }
+.country-ESTONIA       { fill: #b2df8a; }
+.country-LATVIA        { fill: #33a02c; }
+
+.country-FRANCE        { fill: #cab2d6; }
+.country-GERMANY       { fill: #6a3d9a; }
+.country-NETHERLANDS   { fill: #9e9ac8; }
+.country-UNITEDKINGDOM { fill: #bcbddc; }
+.country-LUXEMBOURG    { fill: #dadaeb; }
+.country-SWITZERLAND   { fill: #af8dc3; }
+
+.country-AUSTRIA       { fill: #fdbf6f; }
+.country-SLOVENIA      { fill: #ff7f00; }
+.country-SLOVAKIA      { fill: #fdae6b; }
+
+.country-POLAND        { fill: #fb9a99; }
+.country-CROATIA       { fill: #e31a1c; }
+
+.country-GREECE        { fill: #ffffb3; }
