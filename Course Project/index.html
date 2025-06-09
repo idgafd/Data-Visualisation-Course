@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sexual Assault Statistics Visualization</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 50%, #2d2d2d 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 1400px;
+            width: 100%;
+        }
+        
+        h1 {
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            color: #f5f5f5;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+        
+        .subtitle {
+            margin-bottom: 40px;
+            opacity: 0.7;
+            font-size: 1.2em;
+            font-weight: 300;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .perpetrator-section {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+            justify-content: center;
+            width: 100%;
+        }
+        
+        .left-viz {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .viz-title {
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            color: #f0f0f0;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+        
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            min-width: 280px;
+            align-self: flex-end;
+        }
+        
+        .data-selector {
+            background: rgba(20, 20, 20, 0.4);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(80, 80, 80, 0.1);
+            height: 640px;
+            overflow-y: auto;
+        }
+        
+        .data-selector::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .data-selector::-webkit-scrollbar-track {
+            background: rgba(40, 40, 40, 0.2);
+            border-radius: 3px;
+        }
+        
+        .data-selector::-webkit-scrollbar-thumb {
+            background: rgba(100, 100, 100, 0.3);
+            border-radius: 3px;
+        }
+        
+        .data-selector::-webkit-scrollbar-thumb:hover {
+            background: rgba(120, 120, 120, 0.4);
+        }
+        
+        .data-selector h3 {
+            margin: 0 0 15px 0;
+            color: #f0f0f0;
+            font-size: 1.1em;
+            font-weight: 300;
+            text-align: center;
+        }
+        
+        .data-card {
+            display: block;
+            width: 100%;
+            padding: 0;
+            margin-bottom: 6px;
+            background: rgba(25, 25, 25, 0.3);
+            border: 1px solid rgba(80, 80, 80, 0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            max-height: 60px;
+        }
+        
+        .data-card:hover {
+            background: rgba(40, 40, 40, 0.4);
+            border-color: rgba(120, 120, 120, 0.2);
+        }
+        
+        .data-card.active {
+            background: rgba(81, 9, 8, 0.2);
+            border-color: rgba(101, 6, 5, 0.4);
+            max-height: 100px;
+        }
+        
+        .data-card:last-child {
+            margin-bottom: 0;
+        }
+        
+        .card-content {
+            padding: 12px 16px;
+            position: relative;
+        }
+        
+        .card-title {
+            font-weight: 300;
+            color: #d0d0d0;
+            font-size: 0.85em;
+            line-height: 1.3;
+            margin-bottom: 0;
+            display: block;
+        }
+        
+        .card-percentage {
+            font-weight: 400;
+            color: #ff9999;
+            font-size: 1.1em;
+            margin-top: 8px;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            height: 0;
+            overflow: hidden;
+        }
+        
+        .data-card.active .card-percentage {
+            opacity: 1;
+            transform: translateY(0);
+            height: auto;
+        }
+        
+        .card-percentage::after {
+            content: '%';
+            font-size: 0.8em;
+            opacity: 0.8;
+            margin-left: 1px;
+        }
+        
+        .svg-container {
+            margin: 20px 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            border: 1px solid rgba(80, 80, 80, 0.2);
+            background: rgba(10, 10, 10, 0.3);
+        }
+        
+        .victim-blaming-section {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+            justify-content: center;
+            width: 100%;
+            margin-left: 0;
+        }
+        
+        .blaming-viz {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .resources-section {
+            width: 100%;
+            max-width: 800px;
+            margin: 40px auto 0;
+            background: rgba(20, 20, 20, 0.4);
+            border-radius: 12px;
+            padding: 30px;
+            border: 1px solid rgba(80, 80, 80, 0.1);
+        }
+        
+        .resources-title {
+            font-size: 1.5em;
+            color: #f0f0f0;
+            font-weight: 300;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .resources-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .resource-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: rgba(25, 25, 25, 0.3);
+            border: 1px solid rgba(80, 80, 80, 0.1);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .resource-item:hover {
+            background: rgba(40, 40, 40, 0.4);
+            border-color: rgba(120, 120, 120, 0.2);
+        }
+        
+        .resource-link {
+            color: #99ccff;
+            text-decoration: none;
+            font-size: 0.9em;
+            line-height: 1.4;
+            flex: 1;
+        }
+        
+        .resource-link:hover {
+            color: #bbddff;
+            text-decoration: underline;
+        }
+        
+        .control-group {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            background: rgba(40, 40, 40, 0.3);
+            border: 1px solid rgba(100, 100, 100, 0.2);
+            color: #c0c0c0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+            font-weight: 300;
+        }
+        
+        button:hover {
+            background: rgba(50, 50, 50, 0.4);
+            border-color: rgba(120, 120, 120, 0.3);
+            color: #e0e0e0;
+        }
+        
+        .topic-bubble {
+            cursor: pointer;
+        }
+        
+        .phrase-bubble {
+            cursor: pointer;
+        }
+        
+        .bubble-text {
+            font-size: 10px;
+            text-anchor: middle;
+            dominant-baseline: middle;
+            fill: #e0e0e0;
+            pointer-events: none;
+        }
+        
+        .percentage-text {
+            font-size: 12px;
+            font-weight: bold;
+            text-anchor: middle;
+            dominant-baseline: middle;
+            fill: #e0e0e0;
+            pointer-events: none;
+        }
+        
+        @media (max-width: 1200px) {
+            .perpetrator-section {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .victim-blaming-section {
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .right-panel {
+                min-width: 100%;
+                max-width: 500px;
+                align-self: auto;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .container {
+                padding: 0 10px;
+            }
+            
+            .right-panel {
+                gap: 20px;
+            }
+            
+            .data-selector {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sexual Assault Statistics</h1>
+        <p class="subtitle">Interactive Data Visualization & Analysis</p>
+        
+        <div class="main-content">
+            <div class="perpetrator-section">
+                <div class="left-viz">
+                    <h2 class="viz-title">Perpetrator Mindset</h2>
+                    <div class="svg-container" id="visualization"></div>
+                </div>
+                
+                <div class="right-panel">
+                    <div class="data-selector">
+                        <h3>Select Dataset</h3>
+                        <div class="data-card" data-percentage="31.7">
+                            <div class="card-content">
+                                <span class="card-title">Men endorsing forced intercourse if there are no consequences</span>
+                                <div class="card-percentage">31.7</div>
+                            </div>
+                        </div>
+                        <div class="data-card" data-percentage="13.6">
+                            <div class="card-content">
+                                <span class="card-title">Men explicitly admitting they would "rape"</span>
+                                <div class="card-percentage">13.6</div>
+                            </div>
+                        </div>
+                        <div class="data-card" data-percentage="6.0">
+                            <div class="card-content">
+                                <span class="card-title">Men self-reporting rape or attempted rape</span>
+                                <div class="card-percentage">6.0</div>
+                            </div>
+                        </div>
+                        <div class="data-card" data-percentage="25.0">
+                            <div class="card-content">
+                                <span class="card-title">Men admitting to sexually coercive behavior (verbal pressure, manipulation, intoxication)</span>
+                                <div class="card-percentage">25.0</div>
+                            </div>
+                        </div>
+                        <div class="data-card" data-percentage="11.5">
+                            <div class="card-content">
+                                <span class="card-title">Perpetrators justifying actions based on victim's sexual arousal</span>
+                                <div class="card-percentage">11.5</div>
+                            </div>
+                        </div>
+                        <div class="data-card" data-percentage="32.8">
+                            <div class="card-content">
+                                <span class="card-title">Perpetrators believing the victim 'led them on'</span>
+                                <div class="card-percentage">32.8</div>
+                            </div>
+                        </div>
+                        <div class="data-card" data-percentage="23.0">
+                            <div class="card-content">
+                                <span class="card-title">Perpetrators blaming the victim as responsible for the assault</span>
+                                <div class="card-percentage">23.0</div>
+                            </div>
+                        </div>
+                        <div class="data-card" data-percentage="33.9">
+                            <div class="card-content">
+                                <span class="card-title">Perpetrators assuming the victim would enjoy it once it started</span>
+                                <div class="card-percentage">33.9</div>
+                            </div>
+                        </div>
+                        <div class="data-card" data-percentage="53.6">
+                            <div class="card-content">
+                                <span class="card-title">Perpetrators interpreting resistance as 'playing hard to get'</span>
+                                <div class="card-percentage">53.6</div>
+                            </div>
+                        </div>
+                        <div class="data-card" data-percentage="54.1">
+                            <div class="card-content">
+                                <span class="card-title">Perpetrators expressing general mistrust of women</span>
+                                <div class="card-percentage">54.1</div>
+                            </div>
+                        </div>
+                        <div class="data-card" data-percentage="67.2">
+                            <div class="card-content">
+                                <span class="card-title">Perpetrators believing the victim wanted 'rough sex'</span>
+                                <div class="card-percentage">67.2</div>
+                            </div>
+                        </div>
+                        <div class="data-card" data-percentage="68.9">
+                            <div class="card-content">
+                                <span class="card-title">Perpetrators feeling treated unfairly by the victim</span>
+                                <div class="card-percentage">68.9</div>
+                            </div>
+                        </div>
+                        <div class="data-card" data-percentage="83.0">
+                            <div class="card-content">
+                                <span class="card-title">Perpetrators believing the victim got what she deserved</span>
+                                <div class="card-percentage">83.0</div>
+                            </div>
+                        </div>
+                        <div class="data-card" data-percentage="77.0">
+                            <div class="card-content">
+                                <span class="card-title">Perpetrators feeling the victim owed them sex</span>
+                                <div class="card-percentage">77.0</div>
+                            </div>
+                        </div>
+                        <div class="data-card" data-percentage="40.0">
+                            <div class="card-content">
+                                <span class="card-title">Perpetrators using victim's intoxication as justification</span>
+                                <div class="card-percentage">40.0</div>
+                            </div>
+                        </div>
+                        <div class="data-card" data-percentage="23.2">
+                            <div class="card-content">
+                                <span class="card-title">Perpetrators blaming the victim's behavior or choices</span>
+                                <div class="card-percentage">23.2</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="victim-blaming-section">
+                <div class="blaming-viz">
+                    <h2 class="viz-title">Victim Blaming Patterns</h2>
+                    <div class="svg-container" id="blameVisualization"></div>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <button id="pauseBtn">Pause</button>
+                <button id="resetBtn">Reset</button>
+            </div>
+            
+            <div class="resources-section">
+                <h3 class="resources-title">Resources & References</h3>
+                <div class="resources-list" id="resourcesList">
+                    <div class="resource-item">
+                        <a href="https://commons.und.edu/cgi/viewcontent.cgi?article=1033&context=psych-fac" target="_blank" class="resource-link">University of North Dakota - Yes, (most) men know what rape is: A mixed-methods investigation into college men’s definitions of rape</a>
+                    </div>
+                    <div class="resource-item">
+                        <a href="https://www.researchgate.net/publication/291567285_Denying_Rape_but_Endorsing_Forceful_Intercourse_Exploring_Differences_Among_Responders" target="_blank" class="resource-link">Sarah Edwards, Verlin B Hinsz, Kathryn A. Bradshaw - Denying Rape but Endorsing Forceful Intercourse: Exploring Differences Among Responders</a>
+                    </div>
+                    <div class="resource-item">
+                        <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4491036/" target="_blank" class="resource-link">Rhiana Wegner, Antonia Abbey, Jennifer Pierce, Sheri E Pegram, Jacqueline Woerner - Sexual Assault Perpetrators’ Justifications for Their Actions: Relationships to Rape Supportive Attitudes, Incident Characteristics, and Future Perpetration</a>
+                    </div>
+                    <div class="resource-item">
+                        <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4484276/" target="_blank" class="resource-link">Antonia Abbey, Pam McAuslan - A Longitudinal Examination of Male College Students’ Perpetration of Sexual Assault</a>
+                    </div>
+                    <div class="resource-item">
+                        <a href="https://www.verywellmind.com/sexual-assault-and-victim-blaming-4802707" target="_blank" class="resource-link">Amy Morin, LCSW - Sexual Assault and Victim Blaming</a>
+                    </div>
+                    <div class="resource-item">
+                        <a href="https://ec.europa.eu/eurostat/web/gender-based-violence/database" target="_blank" class="resource-link">Eurostat - Gender Based Violence Against Women</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Extended Victim Blaming Data
+        const victimBlamingData = [
+            {
+                topic: "Blaming victim's clothing",
+                percentage: 40,
+                phrases: [
+                    "What did you expect dressed like that?",
+                    "She was asking for it",
+                    "Shouldn't have worn that",
+                    "She knew what she was doing",
+                    "Dressed too provocatively",
+                    "Asked for trouble"
+                ]
+            },
+            {
+                topic: "Blaming victim's intoxication",
+                percentage: 38,
+                phrases: [
+                    "Too drunk, what did she expect?",
+                    "Should have known better",
+                    "Why drink that much?",
+                    "Irresponsible for a woman",
+                    "Lost control of herself",
+                    "Couldn't make good decisions",
+                    "Should have stayed sober"
+                ]
+            },
+            {
+                topic: "Blaming victim's behavior",
+                percentage: 50,
+                phrases: [
+                    "Shouldn't have gone with them",
+                    "She provoked it",
+                    "Put herself in that situation",
+                    "Was flirting all night",
+                    "Led him on",
+                    "Sent mixed signals",
+                    "Should have been more careful",
+                    "Acting inappropriately"
+                ]
+            },
+            {
+                topic: "Assuming consent",
+                percentage: 42,
+                phrases: [
+                    "Just playing hard to get",
+                    "She enjoyed it anyway",
+                    "Didn't really mean no",
+                    "Could tell she wanted it",
+                    "Body language said yes",
+                    "Was into it at first"
+                ]
+            },
+            {
+                topic: "Questioning resistance",
+                percentage: 45,
+                phrases: [
+                    "Why didn't she fight back?",
+                    "Should have fought harder",
+                    "Would've screamed if real",
+                    "Why didn't she run?",
+                    "Didn't resist enough",
+                    "Could have escaped",
+                    "Should have called for help",
+                    "Gave up too easily"
+                ]
+            },
+            {
+                topic: "Doubting credibility",
+                percentage: 45,
+                phrases: [
+                    "Are you sure she said no?",
+                    "Regretted it next day",
+                    "Girls lie about rape",
+                    "Doing it for attention",
+                    "Making it up",
+                    "False accusation",
+                    "Trying to ruin his life"
+                ]
+            },
+            {
+                topic: "Minimizing harm",
+                percentage: 35,
+                phrases: [
+                    "It wasn't that bad",
+                    "Boys will be boys",
+                    "Just a misunderstanding",
+                    "He didn't mean it",
+                    "Not really assault",
+                    "She's overreacting"
+                ]
+            },
+            {
+                topic: "Victim's past",
+                percentage: 42,
+                phrases: [
+                    "She has a reputation",
+                    "Known to sleep around",
+                    "Not her first time",
+                    "Has done this before",
+                    "What about her history?",
+                    "She's no angel",
+                    "Used to this kind of thing"
+                ]
+            },
+            {
+                topic: "Relationship context",
+                percentage: 33,
+                phrases: [
+                    "They were dating",
+                    "She agreed to go out",
+                    "They knew each other",
+                    "Not like he's a stranger",
+                    "They had history",
+                    "She trusted him"
+                ]
+            },
+            {
+                topic: "Timing questions",
+                percentage: 29,
+                phrases: [
+                    "Why report it now?",
+                    "Took too long to tell",
+                    "Should have said something earlier",
+                    "Convenient timing",
+                    "Why wait so long?"
+                ]
+            }
+        ];
+
+        // Perpetrator Mindset Visualization (unchanged)
+        class StatisticsVisualization {
+            constructor() {
+                this.width = 600;
+                this.height = 600;
+                this.centerX = this.width / 2;
+                this.centerY = this.height / 2;
+                this.outerRadius = 250;
+                this.total = 100;
+                this.isPaused = false;
+                this.animationSpeed = 4000;
+                this.activePercent = null;
+                this.intervalId = null;
+
+                this.colors = {
+                    neutral: "rgba(120, 120, 120, 0.4)",
+                    highlight: [
+                        "rgb(81, 9, 8)",
+                        "rgb(94, 7, 6)", 
+                        "rgb(101, 6, 5)", 
+                        "rgb(107, 5, 4)"
+                    ],
+                    fade: "rgba(80, 80, 80, 0.2)",
+                    background: "radial-gradient(circle at center, rgba(20,20,20,0.2), rgba(0,0,0,0.6))"
+                };
+                
+                this.init();
+                this.setupControls();
+            }
+            
+            init() {
+                d3.select("#visualization").selectAll("*").remove();
+                
+                this.svg = d3.select("#visualization")
+                    .append("svg")
+                    .attr("width", this.width)
+                    .attr("height", this.height)
+                    .style("background", this.colors.background);
+                
+                this.generateParticles();
+                this.drawParticles();
+                
+                if (this.activePercent !== null) {
+                    this.startAnimation();
+                }
+            }
+            
+            generateParticles() {
+                this.circles = d3.range(this.total).map((d, i) => {
+                    const angle = Math.random() * 2 * Math.PI;
+                    const radius = Math.sqrt(Math.random()) * this.outerRadius;
+                    const x = this.centerX + radius * Math.cos(angle);
+                    const y = this.centerY + radius * Math.sin(angle);
+                    const r = 4 + Math.random() * 7;
+                    
+                    return {
+                        id: i,
+                        x: x,
+                        y: y,
+                        r: r,
+                        originalR: r
+                    };
+                });
+            }
+            
+            drawParticles() {
+                this.circleSel = this.svg.selectAll("circle")
+                    .data(this.circles, d => d.id);
+                
+                this.circleSel.exit().remove();
+                
+                const circleEnter = this.circleSel.enter()
+                    .append("circle")
+                    .attr("cx", d => d.x)
+                    .attr("cy", d => d.y)
+                    .attr("r", 0)
+                    .attr("fill", this.colors.neutral);
+                
+                this.circleSel = circleEnter.merge(this.circleSel);
+                
+                this.circleSel
+                    .transition()
+                    .duration(1200)
+                    .ease(d3.easeElasticOut.amplitude(1).period(0.5))
+                    .attr("r", d => d.r);
+                
+                this.startBreathing();
+            }
+            
+            startBreathing() {
+                if (this.isPaused || this.activePercent !== null) return;
+                
+                this.circleSel
+                    .transition()
+                    .duration(3500)
+                    .ease(d3.easeSinInOut)
+                    .attr("r", d => d.originalR * 1.02)
+                    .transition()
+                    .duration(3500)
+                    .ease(d3.easeSinInOut)
+                    .attr("r", d => d.originalR)
+                    .on("end", () => this.startBreathing());
+            }
+            
+            startAnimation() {
+                if (this.intervalId) clearInterval(this.intervalId);
+                
+                if (this.circleSel) {
+                    this.circleSel.interrupt();
+                }
+                
+                this.updateVisualization();
+                
+                this.intervalId = setInterval(() => {
+                    if (this.isPaused) return;
+                    this.updateVisualization();
+                }, this.animationSpeed);
+            }
+            
+            updateVisualization() {
+                if (this.activePercent === null) return;
+                
+                if (this.circleSel) {
+                    this.circleSel.interrupt();
+                }
+                
+                const activeCount = Math.floor(this.total * this.activePercent / 100);
+                const activeSet = new Set(d3.shuffle([...this.circles]).slice(0, activeCount));
+                
+                this.circleSel
+                    .transition()
+                    .duration(1500)
+                    .ease(d3.easeCubicInOut)
+                    .attr("fill", d => {
+                        if (activeSet.has(d)) {
+                            return this.colors.highlight[d.id % this.colors.highlight.length];
+                        }
+                        return this.colors.fade;
+                    })
+                    .attr("r", d => {
+                        if (activeSet.has(d)) {
+                            return d.originalR * 1.15;
+                        }
+                        return d.originalR * 0.8;
+                    });
+            }
+            
+            setupControls() {
+                // Data selector
+                document.querySelectorAll('.data-card').forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        
+                        if (card.classList.contains('active')) {
+                            card.classList.remove('active');
+                            this.activePercent = null;
+                            if (this.intervalId) clearInterval(this.intervalId);
+                            this.circleSel.interrupt();
+                            this.circleSel
+                                .transition()
+                                .duration(800)
+                                .attr("fill", this.colors.neutral)
+                                .attr("r", d => d.originalR);
+                            this.startBreathing();
+                        } else {
+                            document.querySelectorAll('.data-card').forEach(c => c.classList.remove('active'));
+                            card.classList.add('active');
+                            
+                            const newPercentage = parseFloat(card.dataset.percentage);
+                            if (!isNaN(newPercentage)) {
+                                this.activePercent = newPercentage;
+                                this.startAnimation();
+                            }
+                        }
+                    });
+                });
+                
+                // Control buttons
+                const pauseBtn = document.getElementById('pauseBtn');
+                if (pauseBtn) {
+                    pauseBtn.addEventListener('click', () => {
+                        this.isPaused = !this.isPaused;
+                        pauseBtn.textContent = this.isPaused ? 'Resume' : 'Pause';
+                    });
+                }
+                
+                const resetBtn = document.getElementById('resetBtn');
+                if (resetBtn) {
+                    resetBtn.addEventListener('click', () => {
+                        this.init();
+                    });
+                }
+            }
+        }
+
+        // Bubble Chart for Victim Blaming
+        class VictimBlamingBubbleChart {
+            constructor() {
+                this.updateDimensions();
+                this.colors = {
+                    neutral: "rgba(120, 120, 120, 0.6)",
+                    highlight: [
+                        "rgb(81, 9, 8)",
+                        "rgb(94, 7, 6)", 
+                        "rgb(101, 6, 5)", 
+                        "rgb(107, 5, 4)"
+                    ]
+                };
+                this.init();
+                this.setupResize();
+            }
+
+            updateDimensions() {
+                // Make responsive to screen width, but with proper constraints
+                const maxWidth = Math.min(window.innerWidth - 100, 1400);
+                const maxHeight = Math.min(window.innerHeight - 200, 1000);
+                
+                this.width = Math.max(800, maxWidth);
+                this.height = Math.max(600, maxHeight);
+            }
+
+            setupResize() {
+                window.addEventListener('resize', () => {
+                    this.updateDimensions();
+                    this.init();
+                });
+            }
+
+            init() {
+                d3.select("#blameVisualization").selectAll("*").remove();
+                
+                this.svg = d3.select("#blameVisualization")
+                    .append("svg")
+                    .attr("width", this.width)
+                    .attr("height", this.height)
+                    .style("background", "radial-gradient(circle at center, rgba(20,20,20,0.2), rgba(0,0,0,0.6))")
+                    .style("cursor", "grab");
+
+                // Create zoom behavior with pan and zoom
+                this.zoom = d3.zoom()
+                    .scaleExtent([0.3, 3])
+                    .on("zoom", (event) => {
+                        this.bubbleContainer.attr("transform", event.transform);
+                    });
+
+                this.svg.call(this.zoom);
+                
+                // Create main container for bubbles
+                this.bubbleContainer = this.svg.append("g");
+
+                this.createNodes();
+                this.createSimulation();
+                this.drawBubbles();
+                
+                // Add instructions
+                this.addInstructions();
+            }
+
+            addInstructions() {
+ 
+            }
+
+            createNodes() {
+                this.nodes = [];
+                this.topicGroups = new Map();
+                let nodeId = 0;
+
+                // Create a grid-like arrangement with more spacing
+                const cols = Math.ceil(Math.sqrt(victimBlamingData.length));
+                const rows = Math.ceil(victimBlamingData.length / cols);
+                const gridSpacingX = this.width / (cols + 1);
+                const gridSpacingY = this.height / (rows + 1);
+
+                victimBlamingData.forEach((topic, topicIndex) => {
+                    // Calculate grid position with some randomness
+                    const gridCol = topicIndex % cols;
+                    const gridRow = Math.floor(topicIndex / cols);
+                    const baseX = (gridCol + 1) * gridSpacingX;
+                    const baseY = (gridRow + 1) * gridSpacingY;
+                    
+                    // Add randomness but keep groups separated
+                    const centerX = baseX + (Math.random() - 0.5) * gridSpacingX * 0.3;
+                    const centerY = baseY + (Math.random() - 0.5) * gridSpacingY * 0.3;
+                    
+                    // Create topic node
+                    const topicRadius = Math.sqrt(topic.percentage) * 4 + 30;
+                    const topicNode = {
+                        id: nodeId++,
+                        type: 'topic',
+                        topic: topic.topic,
+                        percentage: topic.percentage,
+                        radius: topicRadius,
+                        x: centerX,
+                        y: centerY,
+                        centerX: centerX,
+                        centerY: centerY,
+                        phrases: topic.phrases,
+                        groupId: topicIndex
+                    };
+                    this.nodes.push(topicNode);
+                    
+                    const groupNodes = [topicNode];
+
+                    // Create phrase nodes in a circle around the topic
+                    topic.phrases.forEach((phrase, phraseIndex) => {
+                        const phraseRadius = Math.max(18, Math.min(35, phrase.length * 0.9 + 15));
+                        const angle = (phraseIndex / topic.phrases.length) * 2 * Math.PI;
+                        const distance = topicRadius + phraseRadius + 60 + Math.random() * 40;
+                        
+                        const phraseNode = {
+                            id: nodeId++,
+                            type: 'phrase',
+                            text: phrase,
+                            parentTopic: topicNode,
+                            radius: phraseRadius,
+                            x: centerX + Math.cos(angle) * distance,
+                            y: centerY + Math.sin(angle) * distance,
+                            centerX: centerX,
+                            centerY: centerY,
+                            groupId: topicIndex,
+                            targetAngle: angle,
+                            targetDistance: distance
+                        };
+                        this.nodes.push(phraseNode);
+                        groupNodes.push(phraseNode);
+                    });
+                    
+                    this.topicGroups.set(topicIndex, groupNodes);
+                });
+            }
+
+            createSimulation() {
+                this.simulation = d3.forceSimulation(this.nodes)
+                    .force("charge", d3.forceManyBody()
+                        .strength(d => d.type === 'topic' ? -400 : -80))
+                    .force("collide", d3.forceCollide()
+                        .radius(d => d.radius + 10)
+                        .strength(0.8))
+                    .force("center", d3.forceCenter(this.width / 2, this.height / 2).strength(0.01))
+                    .force("groupX", d3.forceX(d => d.centerX).strength(0.15))
+                    .force("groupY", d3.forceY(d => d.centerY).strength(0.15))
+                    .force("link", d3.forceLink()
+                        .id(d => d.id)
+                        .links(this.nodes.filter(d => d.type === 'phrase').map(d => ({
+                            source: d.parentTopic.id,
+                            target: d.id,
+                            distance: d.targetDistance
+                        })))
+                        .distance(d => d.distance)
+                        .strength(0.1));
+            }
+
+            drawBubbles() {
+                this.bubbles = this.bubbleContainer.selectAll(".bubble")
+                    .data(this.nodes)
+                    .enter()
+                    .append("g")
+                    .attr("class", d => `bubble ${d.type}-bubble`);
+
+                // Add circles - all grey initially
+                this.circles = this.bubbles.append("circle")
+                    .attr("r", d => d.radius)
+                    .attr("fill", this.colors.neutral)
+                    .attr("stroke", "rgba(200, 200, 200, 0.3)")
+                    .attr("stroke-width", 1);
+
+                this.addText();
+                this.addInteractions();
+                this.updatePositions();
+                
+                // Add double-click to reset zoom
+                this.svg.on("dblclick", () => {
+                    this.svg.transition()
+                        .duration(750)
+                        .call(this.zoom.transform, d3.zoomIdentity);
+                });
+            }
+
+            addText() {
+                this.bubbles.each((d, i, nodes) => {
+                    const group = d3.select(nodes[i]);
+                    const maxWidth = d.radius * 1.6;
+                    
+                    if (d.type === 'topic') {
+                        // Topic name
+                        const topicLines = this.wrapText(d.topic, maxWidth);
+                        const totalHeight = topicLines.length * 14;
+                        
+                        topicLines.forEach((line, lineIndex) => {
+                            group.append("text")
+                                .attr("class", "bubble-text")
+                                .attr("y", -totalHeight/2 + lineIndex * 14 + 7)
+                                .style("font-weight", "bold")
+                                .style("font-size", "11px")
+                                .text(line);
+                        });
+                        
+                        // Percentage
+                        group.append("text")
+                            .attr("class", "percentage-text")
+                            .attr("y", totalHeight/2 + 8)
+                            .style("font-size", "14px")
+                            .style("font-weight", "bold")
+                            .text(`${d.percentage}%`);
+                            
+                    } else {
+                        // Phrase text
+                        const phraseLines = this.wrapText(d.text, maxWidth);
+                        const totalHeight = phraseLines.length * 12;
+                        
+                        phraseLines.forEach((line, lineIndex) => {
+                            group.append("text")
+                                .attr("class", "bubble-text")
+                                .attr("y", -totalHeight/2 + lineIndex * 12 + 6)
+                                .style("font-size", "10px")
+                                .text(line);
+                        });
+                    }
+                });
+            }
+
+            wrapText(text, maxWidth) {
+                const words = text.split(/\s+/);
+                const lines = [];
+                let currentLine = [];
+                
+                words.forEach(word => {
+                    const testLine = [...currentLine, word].join(' ');
+                    if (testLine.length * 6 < maxWidth || currentLine.length === 0) {
+                        currentLine.push(word);
+                    } else {
+                        if (currentLine.length > 0) {
+                            lines.push(currentLine.join(' '));
+                            currentLine = [word];
+                        }
+                    }
+                });
+                
+                if (currentLine.length > 0) {
+                    lines.push(currentLine.join(' '));
+                }
+                
+                return lines;
+            }
+
+            addInteractions() {
+                this.bubbles
+                    .on("mouseenter", (event, d) => {
+                        if (d.type === 'topic') {
+                            // Highlight entire group with colors from highlight array
+                            const groupNodes = this.topicGroups.get(d.groupId);
+                            groupNodes.forEach((node, index) => {
+                                const nodeIndex = this.nodes.indexOf(node);
+                                const colorIndex = index % this.colors.highlight.length;
+                                d3.select(this.circles.nodes()[nodeIndex])
+                                    .transition()
+                                    .duration(200)
+                                    .attr("fill", this.colors.highlight[colorIndex]);
+                            });
+                        } else {
+                            // Highlight just this phrase with one of the highlight colors
+                            const colorIndex = d.groupId % this.colors.highlight.length;
+                            d3.select(event.currentTarget).select("circle")
+                                .transition()
+                                .duration(200)
+                                .attr("fill", this.colors.highlight[colorIndex]);
+                        }
+                    })
+                    .on("mouseleave", (event, d) => {
+                        if (d.type === 'topic') {
+                            // Reset entire group
+                            const groupNodes = this.topicGroups.get(d.groupId);
+                            groupNodes.forEach(node => {
+                                const nodeIndex = this.nodes.indexOf(node);
+                                d3.select(this.circles.nodes()[nodeIndex])
+                                    .transition()
+                                    .duration(200)
+                                    .attr("fill", this.colors.neutral);
+                            });
+                        } else {
+                            // Reset just this phrase
+                            d3.select(event.currentTarget).select("circle")
+                                .transition()
+                                .duration(200)
+                                .attr("fill", this.colors.neutral);
+                        }
+                    });
+
+                // Individual bubble drag (separate from pan/zoom)
+                this.bubbles.call(d3.drag()
+                    .on("start", (event, d) => {
+                        event.sourceEvent.stopPropagation(); // Prevent zoom pan
+                        if (!event.active) this.simulation.alphaTarget(0.3).restart();
+                        d.fx = d.x;
+                        d.fy = d.y;
+                    })
+                    .on("drag", (event, d) => {
+                        d.fx = event.x;
+                        d.fy = event.y;
+                    })
+                    .on("end", (event, d) => {
+                        if (!event.active) this.simulation.alphaTarget(0);
+                        d.fx = null;
+                        d.fy = null;
+                    }));
+            }
+
+            updatePositions() {
+                this.simulation.on("tick", () => {
+                    this.bubbles.attr("transform", d => `translate(${d.x},${d.y})`);
+                });
+            }
+        }
+
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, starting initialization...');
+            
+            try {
+                console.log('Creating StatisticsVisualization...');
+                const statsViz = new StatisticsVisualization();
+                console.log('StatisticsVisualization created successfully');
+                
+                console.log('Creating VictimBlamingBubbleChart...');
+                const bubbleChart = new VictimBlamingBubbleChart();
+                console.log('VictimBlamingBubbleChart created successfully');
+                
+            } catch (error) {
+                console.error('Initialization error:', error);
+                console.error('Error stack:', error.stack);
+            }
+        });
+
+        // Global error handler
+        window.addEventListener('error', function(e) {
+            console.error('Global error:', e.error);
+            console.error('Message:', e.message);
+            console.error('Filename:', e.filename);
+            console.error('Line:', e.lineno, 'Column:', e.colno);
+        });
+    </script>
+</body>
+</html>
