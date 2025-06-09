@@ -260,6 +260,21 @@
             color: #bbddff;
             text-decoration: underline;
         }
+
+        .resource-btn {        /* кнопка-посилання */
+            flex-shrink: 0;
+            padding: 6px 12px;
+            background: rgba(81,9,8,.35);
+            border: 1px solid rgba(120,120,120,.35);
+            border-radius: 6px;
+            font-size: 0.8em;
+            color: #ffbfbf;
+            text-decoration: none;
+            transition: .25s;
+        }
+        .resource-btn::after { content: " ↗"; }
+        .resource-btn:hover   { background: rgba(81,9,8,.55);
+                                border-color: rgba(150,150,150,.45); }
         
         .control-group {
             display: flex;
@@ -476,30 +491,35 @@
             </div>
             
             <div class="resources-section">
-                <h3 class="resources-title">Resources & References</h3>
-                <div class="resources-list" id="resourcesList">
-                    <div class="resource-item">
-                        <a href="https://commons.und.edu/cgi/viewcontent.cgi?article=1033&context=psych-fac" target="_blank" class="resource-link">University of North Dakota - Yes, (most) men know what rape is: A mixed-methods investigation into college men’s definitions of rape</a>
-                    </div>
-                    <div class="resource-item">
-                        <a href="https://www.researchgate.net/publication/291567285_Denying_Rape_but_Endorsing_Forceful_Intercourse_Exploring_Differences_Among_Responders" target="_blank" class="resource-link">Sarah Edwards, Verlin B Hinsz, Kathryn A. Bradshaw - Denying Rape but Endorsing Forceful Intercourse: Exploring Differences Among Responders</a>
-                    </div>
-                    <div class="resource-item">
-                        <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4491036/" target="_blank" class="resource-link">Rhiana Wegner, Antonia Abbey, Jennifer Pierce, Sheri E Pegram, Jacqueline Woerner - Sexual Assault Perpetrators’ Justifications for Their Actions: Relationships to Rape Supportive Attitudes, Incident Characteristics, and Future Perpetration</a>
-                    </div>
-                    <div class="resource-item">
-                        <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4484276/" target="_blank" class="resource-link">Antonia Abbey, Pam McAuslan - A Longitudinal Examination of Male College Students’ Perpetration of Sexual Assault</a>
-                    </div>
-                    <div class="resource-item">
-                        <a href="https://www.verywellmind.com/sexual-assault-and-victim-blaming-4802707" target="_blank" class="resource-link">Amy Morin, LCSW - Sexual Assault and Victim Blaming</a>
-                    </div>
-                    <div class="resource-item">
-                        <a href="https://ec.europa.eu/eurostat/web/gender-based-violence/database" target="_blank" class="resource-link">Eurostat - Gender Based Violence Against Women</a>
-                    </div>
-                </div>
+                  <h3 class="resources-title">Resources &amp; References</h3>
+                  <div class="resources-list" id="resourcesList">
+                      <div class="resource-item">
+                          <span class="resource-title">University of North Dakota - Yes, (most) men know what rape is: A mixed-methods investigation into college men’s definitions of rape</span>
+                          <a class="resource-btn" href="https://commons.und.edu/cgi/viewcontent.cgi?article=1033&context=psych-fac" target="_blank">View</a>
+                      </div>
+                      <div class="resource-item">
+                          <span class="resource-title">Sarah Edwards, Verlin B Hinsz, Kathryn A. Bradshaw - Denying Rape but Endorsing Forceful Intercourse: Exploring Differences Among Responders</span>
+                          <a class="resource-btn" href="https://www.researchgate.net/publication/291567285_Denying_Rape_but_Endorsing_Forceful_Intercourse_Exploring_Differences_Among_Responders" target="_blank">View</a>
+                      </div>
+                      <div class="resource-item">
+                          <span class="resource-title">Rhiana Wegner, Antonia Abbey, Jennifer Pierce, Sheri E Pegram, Jacqueline Woerner - Sexual Assault Perpetrators’ Justifications for Their Actions: Relationships to Rape Supportive Attitudes, Incident Characteristics, and Future Perpetration</span>
+                          <a class="resource-btn" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4491036/" target="_blank">View</a>
+                      </div>
+                      <div class="resource-item">
+                          <span class="resource-title">Antonia Abbey, Pam McAuslan - A Longitudinal Examination of Male College Students’ Perpetration of Sexual Assault</span>
+                          <a class="resource-btn" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4484276/" target="_blank">View</a>
+                      </div>
+                      <div class="resource-item">
+                          <span class="resource-title">Amy Morin, LCSW - Sexual Assault and Victim Blaming</span>
+                          <a class="resource-btn" href="https://www.verywellmind.com/sexual-assault-and-victim-blaming-4802707" target="_blank">View</a>
+                      </div>
+                      <div class="resource-item">
+                          <span class="resource-title">Eurostat - Gender Based Violence Against Women</span>
+                          <a class="resource-btn" href="https://ec.europa.eu/eurostat/web/gender-based-violence/database" target="_blank">View</a>
+                      </div>
+                  </div>
+              </div>
             </div>
-        </div>
-    </div>
 
     <script>
         // Extended Victim Blaming Data
