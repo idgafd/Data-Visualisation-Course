@@ -241,6 +241,7 @@
             border: 1px solid rgba(80, 80, 80, 0.1);
             border-radius: 8px;
             transition: all 0.3s ease;
+            gap: 15px;
         }
         
         .resource-item:hover {
@@ -248,38 +249,38 @@
             border-color: rgba(120, 120, 120, 0.2);
         }
         
-        .resource-link {
-            color: #99ccff;
-            text-decoration: none;
+        .resource-title {
+            color: #d0d0d0;
             font-size: 0.9em;
             line-height: 1.4;
             flex: 1;
+            text-align: left;
+            margin: 0;
         }
         
-        .resource-link:hover {
-            color: #bbddff;
-            text-decoration: underline;
-        }
-
-        .resource-btn{
-            flex-shrink:0;
-            padding:4px 10px;
-            background:transparent;
-            border:1px solid rgba(255,187,187,.6);
-            border-radius:4px;
-            font-size:.75em;
-            color:#ffbfbf;
-            text-decoration:none;
-            transition:.25s;
+        .resource-btn {
+            flex-shrink: 0;
+            padding: 3px 8px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+            font-size: 0.7em;
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            margin-top: 1px;
         }
         
-        .resource-btn:hover{
-            background:rgba(81,9,8,.45);
-            color:#ffdede;
-            border-color:rgba(255,187,187,.9);
+        .resource-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.9);
+            border-color: rgba(255, 255, 255, 0.4);
         }
         
-        .resource-btn::after{content:\" ↗\";}
+        .resource-btn::after {
+            content: " ↗";
+        }
         
         .control-group {
             display: flex;
@@ -496,35 +497,36 @@
             </div>
             
             <div class="resources-section">
-                  <h3 class="resources-title">Resources &amp; References</h3>
-                  <div class="resources-list" id="resourcesList">
-                      <div class="resource-item">
-                          <span class="resource-title">University of North Dakota - Yes, (most) men know what rape is: A mixed-methods investigation into college men’s definitions of rape</span>
-                          <a class="resource-btn" href="https://commons.und.edu/cgi/viewcontent.cgi?article=1033&context=psych-fac" target="_blank">View</a>
-                      </div>
-                      <div class="resource-item">
-                          <span class="resource-title">Sarah Edwards, Verlin B Hinsz, Kathryn A. Bradshaw - Denying Rape but Endorsing Forceful Intercourse: Exploring Differences Among Responders</span>
-                          <a class="resource-btn" href="https://www.researchgate.net/publication/291567285_Denying_Rape_but_Endorsing_Forceful_Intercourse_Exploring_Differences_Among_Responders" target="_blank">View</a>
-                      </div>
-                      <div class="resource-item">
-                          <span class="resource-title">Rhiana Wegner, Antonia Abbey, Jennifer Pierce, Sheri E Pegram, Jacqueline Woerner - Sexual Assault Perpetrators’ Justifications for Their Actions: Relationships to Rape Supportive Attitudes, Incident Characteristics, and Future Perpetration</span>
-                          <a class="resource-btn" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4491036/" target="_blank">View</a>
-                      </div>
-                      <div class="resource-item">
-                          <span class="resource-title">Antonia Abbey, Pam McAuslan - A Longitudinal Examination of Male College Students’ Perpetration of Sexual Assault</span>
-                          <a class="resource-btn" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4484276/" target="_blank">View</a>
-                      </div>
-                      <div class="resource-item">
-                          <span class="resource-title">Amy Morin, LCSW - Sexual Assault and Victim Blaming</span>
-                          <a class="resource-btn" href="https://www.verywellmind.com/sexual-assault-and-victim-blaming-4802707" target="_blank">View</a>
-                      </div>
-                      <div class="resource-item">
-                          <span class="resource-title">Eurostat - Gender Based Violence Against Women</span>
-                          <a class="resource-btn" href="https://ec.europa.eu/eurostat/web/gender-based-violence/database" target="_blank">View</a>
-                      </div>
-                  </div>
-              </div>
+                <h3 class="resources-title">Resources & References</h3>
+                <div class="resources-list" id="resourcesList">
+                    <div class="resource-item">
+                        <span class="resource-title">University of North Dakota - Yes, (most) men know what rape is: A mixed-methods investigation into college men's definitions of rape</span>
+                        <a class="resource-btn" href="https://commons.und.edu/cgi/viewcontent.cgi?article=1033&context=psych-fac" target="_blank">View</a>
+                    </div>
+                    <div class="resource-item">
+                        <span class="resource-title">Sarah Edwards, Verlin B Hinsz, Kathryn A. Bradshaw - Denying Rape but Endorsing Forceful Intercourse: Exploring Differences Among Responders</span>
+                        <a class="resource-btn" href="https://www.researchgate.net/publication/291567285_Denying_Rape_but_Endorsing_Forceful_Intercourse_Exploring_Differences_Among_Responders" target="_blank">View</a>
+                    </div>
+                    <div class="resource-item">
+                        <span class="resource-title">Rhiana Wegner, Antonia Abbey, Jennifer Pierce, Sheri E Pegram, Jacqueline Woerner - Sexual Assault Perpetrators' Justifications for Their Actions: Relationships to Rape Supportive Attitudes, Incident Characteristics, and Future Perpetration</span>
+                        <a class="resource-btn" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4491036/" target="_blank">View</a>
+                    </div>
+                    <div class="resource-item">
+                        <span class="resource-title">Antonia Abbey, Pam McAuslan - A Longitudinal Examination of Male College Students' Perpetration of Sexual Assault</span>
+                        <a class="resource-btn" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4484276/" target="_blank">View</a>
+                    </div>
+                    <div class="resource-item">
+                        <span class="resource-title">Amy Morin, LCSW - Sexual Assault and Victim Blaming</span>
+                        <a class="resource-btn" href="https://www.verywellmind.com/sexual-assault-and-victim-blaming-4802707" target="_blank">View</a>
+                    </div>
+                    <div class="resource-item">
+                        <span class="resource-title">Eurostat - Gender Based Violence Against Women</span>
+                        <a class="resource-btn" href="https://ec.europa.eu/eurostat/web/gender-based-violence/database" target="_blank">View</a>
+                    </div>
+                </div>
             </div>
+        </div>
+    </div>
 
     <script>
         // Extended Victim Blaming Data
